@@ -40,16 +40,29 @@ def file2matrix(filename):
         index += 1
     return returnMat, classLableVector
 
+def autoNorm(dataSet):
+    minVals = dataSet.min(0)
+    maxVals = dataSet.max(0)
+    ranges = maxVals - minVals
+    normDataSet = zeros(shape(dataSet))
+    m = dataSet.shape[0]
+    normDataSet = dataSet - tile(minVals, (m,1))
+    normDataSet = normDataSet / tile(ranges, (m, 1))
+    return normDataSet, ranges, minVals
+
 if __name__ == '__main__':
     group, labels = createDataSet()
     result = classify0([0, 0], group, labels, 3)
     print result
     datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+    print normMat
     # print datingDataMat
     # print datingLabels
     # print datingLabels[0:20]
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.scatter(datingDataMat[:, 1], datingDataMat[:, 2])
-    plt.show()
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111)
+    # ax.scatter(datingDataMat[:, 1], datingDataMat[:, 2])
+    # ax.scatter(datingDataMat[:, 1], datingDataMat[:, 2], 15.0 * array(datingLabels), 15.0 * array(datingLabels))
+    # plt.show()
 
