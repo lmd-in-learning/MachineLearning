@@ -50,13 +50,30 @@ def autoNorm(dataSet):
     normDataSet = normDataSet / tile(ranges, (m, 1))
     return normDataSet, ranges, minVals
 
-if __name__ == '__main__':
-    group, labels = createDataSet()
-    result = classify0([0, 0], group, labels, 3)
-    print result
+def datingClassTest():
+    hoRatio = 0.10
     datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
     normMat, ranges, minVals = autoNorm(datingDataMat)
-    print normMat
+    m = normMat.shape[0]
+    numTestVecs = int(m * hoRatio)
+    errorCount = 0.0
+    for i in range(numTestVecs):
+        classifierResult = classify0(normMat[i, :], normMat[numTestVecs:m, :],\
+                                    datingLabels[numTestVecs:m], 3)
+        print "the classifier came back with: %d, the real answer is: %d" \
+                % (classifierResult, datingLabels[i])
+        if (classifierResult != datingLabels[i]): errorCount += 1.0
+    print "the total error rate is: %f" % (errorCount / float(numTestVecs))
+        
+
+if __name__ == '__main__':
+    datingClassTest()
+    # group, labels = createDataSet()
+    # result = classify0([0, 0], group, labels, 3)
+    # print result
+    # datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
+    # normMat, ranges, minVals = autoNorm(datingDataMat)
+    # print normMat
     # print datingDataMat
     # print datingLabels
     # print datingLabels[0:20]
