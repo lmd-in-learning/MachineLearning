@@ -88,19 +88,21 @@ def classify(inputTree, featLabels, testVec):
                 classLabel = secondDict[key]
     return classLabel
 
-#Using matplotlib to show a decision tree
 
 if __name__ == '__main__':
     myDat, labels = createDataSet()
     shannonEnt = calcShannonEnt(myDat)
     print shannonEnt
+    myTree = retriveTree(0)
+    # print classify(myTree, labels, [1, 0])
+    # print classify(myTree, labels, [1, 1])
     # result0 = splitDataSet(myDat, 0, 1)
     # print result0
     # result1 = splitDataSet(myDat, 0, 0)
     # print result1
-    myTree = createTree(myDat, labels)
-    print myTree
-    print classify(myTree, labels, [1,0])
+    # myTree = createTree(myDat, labels)
+    # print myTree
+    # print classify(myTree, labels, [1,0])
     # print classify(myTree, labels, [1,1])
 
 
