@@ -1,5 +1,6 @@
 from math import log
 import operator
+import treePlotter
 
 def createDataSet():
     dataSet = [[1, 1, 'yes'], [1, 1, 'yes'], [1, 0, 'no'], [0, 1, 'no'], [0, 1, 'no']]
@@ -88,12 +89,23 @@ def classify(inputTree, featLabels, testVec):
                 classLabel = secondDict[key]
     return classLabel
 
+def storeTree(inputTree, filename):
+    import pickle
+    fw = open(filename, 'w')
+    pickle.dump(inputTree, fw)
+    fw.close()
+
+def grabTree(filename):
+    import pickle
+    fr = open(filename)
+    return pickle.load(fr)
+
 
 if __name__ == '__main__':
-    myDat, labels = createDataSet()
-    shannonEnt = calcShannonEnt(myDat)
-    print shannonEnt
-    myTree = retriveTree(0)
+    # myDat, labels = createDataSet()
+    # shannonEnt = calcShannonEnt(myDat)
+    # print shannonEnt
+    # myTree = retriveTree(0)
     # print classify(myTree, labels, [1, 0])
     # print classify(myTree, labels, [1, 1])
     # result0 = splitDataSet(myDat, 0, 1)
@@ -104,6 +116,17 @@ if __name__ == '__main__':
     # print myTree
     # print classify(myTree, labels, [1,0])
     # print classify(myTree, labels, [1,1])
+    # myTree = treePlotter.retriveTree(0)
+    # print myTree
+    # storeTree(myTree, 'classifierStorage1.txt')
+    # print grabTree('classifierStorage1.txt')
+
+    fr = open('lenses.txt')
+    lenses = [inst.strip().split('\t') for inst in fr.readlines()]
+    lensesLabels = ['age', 'prescript', 'astigmatic', 'tearRate']
+    lensesTrees = createTree(lenses, lensesLabels)
+    print lensesTrees
+    treePlotter.createPlot(lensesTrees)
 
 
 
