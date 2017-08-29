@@ -1,4 +1,5 @@
 #SVM algorithm
+from numpy import *
 
 def loadDataSet(fileName):
     dataMat = []; labelMat = []
@@ -32,10 +33,10 @@ class optStruct(object):
         self.m = shape(dataMatIn)[0]
         self.alphas = mat(zeros((self.m, 1)))
         self.b = 0
-        self.eCache = mat(zeros(self.m, 2))
+        self.eCache = mat(zeros((self.m, 2)))
 
 def calcEk(oS, k):
-    fXk = float(multiply(oS.alphas, oS.labelMat)).T * (oS.X * oS.X[k, :]) + oS.b
+    fXk = float(multiply(oS.alphas, oS.labelMat).T * (oS.X * oS.X[k, :].T)) + oS.b
     Ek = fXk - float(oS.labelMat[k])
     return Ek
 
@@ -74,12 +75,12 @@ def innerL(i, oS):
             L = max(0, oS.alphas[j] - oS.alphas[i])
             H = min(oS.C, oS.C + oS.alphas[j] - oS.alphas[i])
         else:
-            L = max(0, oS.alphas[j] + oS.alphas[i] - oS.c)
+            L = max(0, oS.alphas[j] + oS.alphas[i] - oS.C)
             H = min(oS.C, oS.alphas[j] - oS.alphas[i])
         if L == H:
             print "L == H"
             return 0
-        eta = 2.0 * oS.X[i, :] * oS[j, :].T - oS.X[i, :] * oS.X[i, :].T - oS.X[j, :] * oS.X[j, :].T
+        eta = 2.0 * oS.X[i, :] * oS.X[j, :].T - oS.X[i, :] * oS.X[i, :].T - oS.X[j, :] * oS.X[j, :].T
         if eta >= 0:
             print "eta >= 0"
             return 0
@@ -95,7 +96,7 @@ def innerL(i, oS):
              oS.labelMat[j] * (oS.alphas[j] - alphaJold) * oS.X[i, :] * oS.X[j, :].T
         b2 = oS.b - Ei - oS.labelMat[i] * (oS.alphas[i] - alplaIold) * oS.X[i, :] * oS.X[j, :].T - \
              oS.labelMat[j] * (oS.alphas[j] - alphaJold) * oS.X[j, :] * oS.X[j, :].T
-        if (0 < oS.alpha[i]) and (oS.C > oS.alpha[i]):
+        if (0 < oS.alphas[i]) and (oS.C > oS.alphas[i]):
             oS.b = b1
         elif (0 < oS.alphas[j]) and (oS.C > oS.alphas[j]):
             oS.b = b2
@@ -106,7 +107,7 @@ def innerL(i, oS):
         return 0
 
 def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup = ('lin', 0)):
-    oS = optStruct(mat(dataMatIn), mat(classLabels), transpose(), C, toler)
+    oS = optStruct(mat(dataMatIn), mat(classLabels).transpose(), C, toler)
     iter = 0
     entireSet = True
     alphaPairsChanged = 0
@@ -132,6 +133,8 @@ def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup = ('lin', 0)):
 
 if __name__ == '__main__':
     dataArr, labelArr = loadDataSet('testSet.txt')
+    b, alpha = smoP(dataArr, labelArr, 0.6, 0.001, 40)
+
     # print dataArr
     # print labelArr
 
