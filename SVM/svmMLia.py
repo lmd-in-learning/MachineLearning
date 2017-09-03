@@ -36,7 +36,7 @@ class optStruct(object):
         self.eCache = mat(zeros((self.m, 2)))
         self.K = mat(zeros((self.m, self.m)))
         for i in range(self.m):
-            print 'start calc keenel %d of total %d:' % (i, self.m)
+            print('start calc keenel %d of total %d:' % (i, self.m))
             self.K[:, i] = kernelTrans(self.X, self.X[i, :], kTup)
 
 
@@ -84,18 +84,18 @@ def innerL(i, oS):
             L = max(0, oS.alphas[j] + oS.alphas[i] - oS.C)
             H = min(oS.C, oS.alphas[j] + oS.alphas[i])
         if L == H:
-            print "L == H"
+            print("L == H")
             return 0
         # eta = 2.0 * oS.X[i, :] * oS.X[j, :].T - oS.X[i, :] * oS.X[i, :].T - oS.X[j, :] * oS.X[j, :].T
         eta = 2.0 * oS.K[i, j] - oS.K[i, i] - oS.K[j, j]
         if eta >= 0:
-            print "eta >= 0"
+            print("eta >= 0")
             return 0
         oS.alphas[j] -= oS.labelMat[j] * (Ei - Ej) / eta
         oS.alphas[j] = clipAlpha(oS.alphas[j], H, L)
         updateEk(oS, j)
         if (abs(oS.alphas[j] - alphaJold) < 0.00001):
-            print "j not moving enough"
+            print("j not moving enough")
             return 0
         oS.alphas[i] += oS.labelMat[j] * oS.labelMat[i] * (alphaJold - oS.alphas[j])
         updateEk(oS, i)
@@ -128,19 +128,19 @@ def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup = ('lin', 0)):
         if entireSet:
             for i in range(oS.m):
                 alphaPairsChanged += innerL(i, oS)
-                print "fullSet, iter: %d i: %d, pairs changed %d" % (iter, i, alphaPairsChanged)
+                print("fullSet, iter: %d i: %d, pairs changed %d" % (iter, i, alphaPairsChanged))
             iter += 1
         else:
             nonBoundIds = nonzero((oS.alphas.A > 0) * (oS.alphas.A < C))[0]
             for i in nonBoundIds:
                 alphaPairsChanged += innerL(i, oS)
-                print "non-bound, iter: %d, i: %d, pairs changed: %d" % (iter, i, alphaPairsChanged)
+                print("non-bound, iter: %d, i: %d, pairs changed: %d" % (iter, i, alphaPairsChanged))
             iter += 1
         if entireSet:
             entireSet = False
         elif(alphaPairsChanged == 0):
             entireSet = True
-        print "iteration number: %d" % iter
+        print("iteration number: %d" % iter)
     return oS.b, oS.alphas
 
 def calcWs(alphas, dataArr, classLabels):
@@ -174,7 +174,7 @@ def testRbf(k1 = 1.3):
     svInd = nonzero(alphas.A > 0)[0]
     sVs = dataMat[svInd]
     labelSV = labelMat[svInd]
-    print "there are %d Support Vectors" % shape(sVs)[0]
+    print("there are %d Support Vectors" % shape(sVs)[0])
     m, n = shape(dataMat)
     errorCount = 0
     for i in range(m):
@@ -182,7 +182,7 @@ def testRbf(k1 = 1.3):
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
         if sign(predict) != sign(labelArr[i]):
             errorCount += 1
-    print "the training error rate is %f" % (float(errorCount) / m)
+    print("the training error rate is %f" % (float(errorCount) / m))
     dataArr, labelArr = loadDataSet('testSetRBF2.txt')
     errorCount = 0
     dataMat = mat(dataArr)
@@ -193,7 +193,7 @@ def testRbf(k1 = 1.3):
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
         if sign(predict) != sign(labelArr[i]):
             errorCount += 1
-    print "the test error rate is %f" % (float(errorCount) / m)
+    print("the test error rate is %f" % (float(errorCount) / m))
 
 def img2vector(filename):
     returnVect = zeros((1, 1024))
@@ -230,7 +230,7 @@ def testDigits(kTup = ('rbf', 10)):
     svInd = nonzero(alphas.A > 0)[0]
     sVs = dataMat[svInd]
     labelSV = labelMat[svInd]
-    print "there are %d Support Vectors" % shape(sVs)[0]
+    print("there are %d Support Vectors" % shape(sVs)[0])
     m, n = shape(dataMat)
     errorCount = 0
     for i in range(m):
@@ -238,7 +238,7 @@ def testDigits(kTup = ('rbf', 10)):
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
         if sign(predict) != sign(labelArr[i]):
             errorCount += 1
-    print "the training error rate is %f" % (float(errorCount) / m)
+    print("the training error rate is %f" % (float(errorCount) / m))
     dataArr, labelArr = loadDataSet('testSetRBF2.txt')
     errorCount = 0
     dataMat = mat(dataArr)
@@ -249,7 +249,7 @@ def testDigits(kTup = ('rbf', 10)):
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
         if sign(predict) != sign(labelArr[i]):
             errorCount += 1
-    print "the test error rate is %f" % (float(errorCount) / m)
+    print("the test error rate is %f" % (float(errorCount) / m))
 
 
 if __name__ == '__main__':

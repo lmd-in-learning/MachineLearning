@@ -23,7 +23,7 @@ def setOfWords2Vec(vocabList, inputSet):
         if word in vocabList:
             returnVec[vocabList.index(word)] = 1
         else:
-            print "the word: %s is not in my vocabulary!" % word
+            print("the word: %s is not in my vocabulary!" % word)
     return returnVec
 
 def bagOfWords2VecMN(vocabList, inputSet):
@@ -32,7 +32,7 @@ def bagOfWords2VecMN(vocabList, inputSet):
         if word in vocabList:
             returnVec[vocabList.index(word)] += 1
         else:
-            print "the word: %s is not in my vocabulary!" % word
+            print("the word: %s is not in my vocabulary!" % word)
     return returnVec
 
 
@@ -111,7 +111,7 @@ def spamTest():
         wordVector = setOfWords2Vec(vocabList, docList[docIndex])
         if classifyNB(array(wordVector), p0V, p1V, pSpam) != classList[docIndex]:
             errorCount += 1
-    print 'the error rate is: ', float(errorCount) / len(testSet)
+    print('the error rate is: ', float(errorCount) / len(testSet))
 
 def calcMostFreq(vocabList, fullText):
     import operator
@@ -155,7 +155,7 @@ def localWords(feed1, feed0):
         wordVector = bagOfWords2VecMN(vocabList, docList[docIndex])
         if classifyNB(array(wordVector), p0V, p1V, pSpam) != classList[docIndex]:
             errorCount += 1
-    print 'the error rate is: ', float(errorCount) / len(testSet)
+    print('the error rate is: ', float(errorCount) / len(testSet))
     return vocabList, p0V, p1V
 
 def getTopWords(ny, sf):
@@ -168,11 +168,11 @@ def getTopWords(ny, sf):
         if p1V[i] > -6.0:
             topNY.append((vocabList[i], p1V[i]))
     sortedSF = sorted(topSF, key = lambda pair: pair[1], reverse = True)
-    print 'SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**'
+    print('SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**')
     for item in sortedSF:
         print item[0]
     sortedNY = sorted(topNY, key = lambda pair: pair[1], reverse = True)
-    print 'NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**'
+    print('NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**')
     for item in sortedNY:
         print item[0]
 
