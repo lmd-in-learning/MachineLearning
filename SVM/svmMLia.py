@@ -36,6 +36,7 @@ class optStruct(object):
         self.eCache = mat(zeros((self.m, 2)))
         self.K = mat(zeros((self.m, self.m)))
         for i in range(self.m):
+            print 'start calc keenel %d of total %d:' % (i, self.m)
             self.K[:, i] = kernelTrans(self.X, self.X[i, :], kTup)
 
 
@@ -121,6 +122,7 @@ def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup = ('lin', 0)):
     iter = 0
     entireSet = True
     alphaPairsChanged = 0
+    print entireSet, alphaPairsChanged, iter, maxIter
     while (iter < maxIter) and ((alphaPairsChanged > 0) or (entireSet)):
         alphaPairsChanged = 0
         if entireSet:
@@ -193,13 +195,71 @@ def testRbf(k1 = 1.3):
             errorCount += 1
     print "the test error rate is %f" % (float(errorCount) / m)
 
+def img2vector(filename):
+    returnVect = zeros((1, 1024))
+    fr = open(filename)
+    for i in range(32):
+        lineStr = fr.readline()
+        for j in range(32):
+            returnVect[0, 32 * i + j] = int(lineStr[j])
+    return returnVect
+
+def loadImages(dirName):
+    from os import listdir
+    hwLabels = []
+    trainingFileList = listdir(dirName)
+    trainingFileList.remove('.DS_Store') #for mac
+    m = len(trainingFileList)
+    trainingMat = zeros((m, 1024))
+    for i in range(m):
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
+        if classNumStr == 9:
+            hwLabels.append(-1)
+        else:
+            hwLabels.append(1)
+        trainingMat[i, :] = img2vector('%s/%s' % (dirName, fileNameStr))
+    return trainingMat, hwLabels
+
+def testDigits(kTup = ('rbf', 10)):
+    dataArr, labelArr = loadImages('trainingDigits')
+    b, alphas = smoP(dataArr, labelArr, 200, 0.0001, 10000, kTup)
+    dataMat = mat(dataArr)
+    labelMat = mat(labelArr).transpose()
+    svInd = nonzero(alphas.A > 0)[0]
+    sVs = dataMat[svInd]
+    labelSV = labelMat[svInd]
+    print "there are %d Support Vectors" % shape(sVs)[0]
+    m, n = shape(dataMat)
+    errorCount = 0
+    for i in range(m):
+        kernelEval = kernelTrans(sVs, dataMat[i, :], kTup)
+        predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
+        if sign(predict) != sign(labelArr[i]):
+            errorCount += 1
+    print "the training error rate is %f" % (float(errorCount) / m)
+    dataArr, labelArr = loadDataSet('testSetRBF2.txt')
+    errorCount = 0
+    dataMat = mat(dataArr)
+    labelMat = mat(labelArr).transpose()
+    m, n = shape(dataMat)
+    for i in range(m):
+        kernelEval = kernelTrans(sVs, dataMat[i, :], kTup)
+        predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
+        if sign(predict) != sign(labelArr[i]):
+            errorCount += 1
+    print "the test error rate is %f" % (float(errorCount) / m)
+
 
 if __name__ == '__main__':
     # dataArr, labelArr = loadDataSet('testSet.txt')
     # b, alpha = smoP(dataArr, labelArr, 0.6, 0.001, 40)
     # print dataArr
     # print labelArr
-    testRbf()
+    # testRbf()
+    testDigits(('rbf', 10))
+
 
 
 
