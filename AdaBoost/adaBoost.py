@@ -67,7 +67,7 @@ def adaBoostTrainDS(dataArr, classLabels, numIt = 40):
         print("total error: ", errorRate)
         if errorRate == 0.0:
             break
-    return weakClassArr
+    return weakClassArr, aggClassEst
 
 def adaClassify(datToClass, classifierArr):
     dataMatrix = mat(datToClass)
@@ -93,6 +93,33 @@ def loadDataSet(fileName):
         labelMat.append(float(curLine[-1]))
     return dataMat, labelMat
 
+def ployROC(predStrengths, classLabels):
+    import matplotlib.pyplot as plt
+    cur = (1.0, 1.0)
+    ySum = 0.0
+    numPosClas = sum(array(classLabels) == 1.0)
+    yStep = 1 / float(numPosClas)
+    xStep = 1 / float(len(classLabels) - numPosClas)
+    sortedIndicies = predStrengths.argsort()
+    fig = plt.figure()
+    fig.clf()
+    ax = plt.subplot(111)
+    for index in sortedIndicies.tolist()[0]:
+        if classLabels[index] == 1.0:
+            delX = 0
+            delY = yStep
+        else:
+            delX = xStep
+            delY = 0
+        ax.plot([cur[0], cur[0] - delX], [cur[1], cur[1] - delY], c = 'b')
+        cur = (cur[0] - delX, cur[1] - delY)
+    ax.plot([0, 1], [0, 1], 'b--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('Turn Positive Rate')
+    ax.axis([0, 1, 0, 1])
+    plt.show()
+    print("the Area Under the Curve is: ", ySum * xStep)
+
 
 if __name__ == '__main__':
     dataMat, classLabels = loadSimpData()
@@ -106,11 +133,12 @@ if __name__ == '__main__':
     # print(adaClassify([0, 0], weakClassArr))
     # print(adaClassify([[5, 5], [0, 0]], weakClassArr))
     dataArr, labelArr = loadDataSet('horseColicTraining2.txt')
-    classifierArray = adaBoostTrainDS(dataArr, labelArr, 10)
-    testArr, testLabelArr = loadDataSet('horseColicTest2.txt')
-    prediction10 = adaClassify(testArr, classifierArray)
-    errArr = mat(ones((67, 1)))
-    print(errArr[prediction10 != mat(testLabelArr).T].sum())
+    classifierArray, aggClassEst = adaBoostTrainDS(dataArr, labelArr, 10)
+    # testArr, testLabelArr = loadDataSet('horseColicTest2.txt')
+    # prediction10 = adaClassify(testArr, classifierArray)
+    # errArr = mat(ones((67, 1)))
+    # print(errArr[prediction10 != mat(testLabelArr).T].sum())
+    ployROC(aggClassEst.T, labelArr)
 
 
 
